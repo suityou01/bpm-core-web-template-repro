@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    environment:
+      - NODE_VERSION=lts
+    ports:
+      - "24678:24678"
+    volumes:
+      - .:/src
+      #- ./node_modules:/src/node_modules

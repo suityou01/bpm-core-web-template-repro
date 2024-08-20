@@ -1,0 +1,30 @@
+# Base
+ARG NODE_VERSION=20.13.1
+FROM node:${NODE_VERSION}-slim AS base
+ARG PORT=3000
+WORKDIR /src
+RUN \
+     --mount=type=cache,target=/var/cache/apt \
+     apt-get update && apt-get upgrade -y
+
+RUN npm install -g pnpm
+
+# Install
+FROM base AS build
+ENV NODE_ENV=development
+COPY package.json pnpm-lock.yaml ./
+ RUN \
+    --mount=type=cache,target=~/.pnpm \
+    pnpm ci
+
+COPY . .
+
+ RUN \
+    --mount=type=cache,target=/src/node_modules/.cache/nuxt/builds/ \
+    pnpm run build \
+    pnpm prune
+
+# Test
+FROM build AS test
+CMD ["/bin/sh", "-c", "while sleep 1000; do :; done"]
+

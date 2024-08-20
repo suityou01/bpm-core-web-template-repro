@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    app: todos
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: todos-web
+        image: {{ .Values.imageRegistry }}/Values.imageName:{{ .Values.dockerTag }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.appPort}}
